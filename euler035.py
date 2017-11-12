@@ -20,7 +20,7 @@ def isPrime(n):
 
 def isCircularPrime(n):
     numberofDigits = len(str(n))
-    digits = map(int, [i for i in str(n)])
+    digits = map(int, str(n))
     digits.extend(digits) #twice the digits to ease circulation
     for i in range(numberofDigits):
             num = 0
