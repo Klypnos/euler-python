@@ -22,6 +22,7 @@ def fact(k):
     else:
         hits += 1
         return factorial[k]
+
 totalSum = 0
 for val in range(10,1000000):
     digitsVal = map(int, [i for i in str(val)])

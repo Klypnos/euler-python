@@ -5,12 +5,11 @@ Start Time          : 13.11.17 15.07
 End Time            : 13.11.17 15:19
 Total Time Spent    : 00:12
 Complexity          : O(n)
-Answer              :
+Answer              : 1533776805
 
 """
 from itertools import count, imap
 from math import sqrt
-
 
 def triangle(n):
     return n * (n + 1) / 2
