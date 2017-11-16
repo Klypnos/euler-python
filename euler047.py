@@ -22,12 +22,10 @@ def nthPrime(num):
         i = 0
         curr = 2
     while i < num:
-        cond = True
         for j in range(2, int(sqrt(curr)) + 1):
             if curr % j == 0: #no prime
-                cond = False
                 break
-        if cond:
+        else:
             primes[i] = curr
             i += 1
         curr += 1
