@@ -11,127 +11,62 @@ Answer              : 376
 from collections import namedtuple
 from collections import Counter
 
-def royal_flush(player):
-    flush_values = [14,13,12,11,10]
-    if sorted(player.values) == sorted(flush_values):
-        return len(set(player.suits)) == 1
-    return False
+def is_royal(player):
+    royal_values = [14,13,12,11,10]
+    return sorted(player) == sorted(royal_values)
 
-def straight_flush(player):
-    values = sorted(player.values)
-    if range(values[0], values[4] + 1) == values:
-        return len(set(player.suits)) == 1
-    return False
-
-def four_of_a_kind(player):
-    freq = Counter(player.values).most_common()
-    return freq[0][1] == 4
-
-def full_house(player):
+def is_full_house(player):
     freq = Counter(player.values).most_common()
     return freq[0][1] == 3 and freq[1][1] == 2
 
-def flush(player):
+def is_flush(player):
     return len(set(player.suits)) == 1
 
-def straight(player):
+def is_straight(player):
     values = sorted(player.values)
     return range(values[0], values[4] + 1) == values
-
-def three_of_a_kind(player):
-    freq = Counter(player.values).most_common()
-    return freq[0][1] == 3
-
-def two_pairs(player):
-    freq = Counter(player.values).most_common()
-    return (freq[0][1] == 2 and freq[1][1] == 2)
-
-def one_pair(player):
-    freq = Counter(player.values).most_common()
-    return freq[0][1] == 2
-
-def high_card_on_tie(players):
-    freq1 = sorted(players[0].values, reverse=True)
-    freq2 = sorted(players[1].values, reverse=True)
-    print players[0], freq1
-    print players[1], freq2
-    for f1, f2 in zip(freq1, freq2):
-        if f1 > f2:
-            return 0
-        elif f1 < f2:
-            return 1
-
-def high_card(players):
-    freq1 = Counter(players[0].values).most_common()
-    freq2 = Counter(players[1].values).most_common()
-    print players[0], freq1
-    print players[1], freq2
-    for f1, f2 in zip(freq1, freq2):
-        if f1 > f2:
-            return 0
-        elif f1 < f2:
-            return 1
 
 def evaluate_hand(hand):
     player = namedtuple('player',['values','suits'])
     #separate suits and values
-    players = list()
-    players.append(player(values=sorted([hand[i][0] for i in range(5)]), suits=[hand[i][1] for i in range(5)]))
-    players.append(player(values=sorted([hand[i][0] for i in range(5, 10)]), suits=[hand[i][1] for i in range(5, 10)]))
+    player = player(values=[hand[i][0] for i in range(5)]
+                   ,suits=[hand[i][1] for i in range(5)])
+    print player
     old = ['T','J','Q','K','A']
     new = ['10','11','12','13','14']
     table = {}
-    for j in range(2):
-        for i in range(5):
-            for keys, value in zip(old, new):
-                if players[j].values[i] == keys:
-                    players[j].values[i] = int(value)
-            players[j].values[i] = int(players[j].values[i])
+    for i in range(5):
+        for keys, value in zip(old, new):
+            if player.values[i] == keys:
+                player.values[i] = int(value)
+        player.values[i] = int(player.values[i])
 
-    if royal_flush(players[0]) != royal_flush(players[1]):
-        return royal_flush(players[1])
-
-    if straight_flush(players[0]) == straight_flush(players[1]) == 1:
-        return high_card(players)
-    elif straight_flush(players[0]) != straight_flush(players[1]) :
-        return straight_flush(players[1])
-
-    if four_of_a_kind(players[0]) == four_of_a_kind(players[1]) == 1:
-        return high_card(players)
-    elif four_of_a_kind(players[0]) != four_of_a_kind(players[1]):
-        return four_of_a_kind(players[1])
-
-    if full_house(players[0]) == full_house(players[1]) == 1:
-        return high_card(players)
-    elif full_house(players[0]) != full_house(players[1]) :
-        return full_house(players[1])
-
-    if flush(players[0]) == flush(players[1]) == 1:
-        return high_card(players)
-    elif flush(players[0]) != flush(players[1]):
-        return flush(players[1])
-
-    if straight(players[0]) == straight(players[1]) == 1:
-        return high_card(players)
-    elif straight(players[0]) != straight(players[1]):
-        return straight(players[1])
-
-    if three_of_a_kind(players[0]) == three_of_a_kind(players[1]) == 1:
-        return high_card(players)
-    elif three_of_a_kind(players[0]) != three_of_a_kind(players[1]):
-        return three_of_a_kind(players[1])
-
-    if two_pairs(players[0]) == two_pairs(players[1]) == 1:
-        return high_card(players)
-    elif two_pairs(players[0]) != two_pairs(players[1]):
-        return two_pairs(players[1])
-
-    if one_pair(players[0]) == one_pair(players[1]) == 1:
-        return high_card(players)
-    elif one_pair(players[0]) != one_pair(players[1]):
-        return one_pair(players[1])
-
-    return high_card_on_tie(players)
+    royal = is_royal(player)
+    straight = is_straight(player)
+    flush = is_flush(player)
+    frequency = Counter(player.values).most_common()
+    sorted_frequency = sorted(frequency, key = lambda x : (-x[1],-x[0])) # sort negatively according to second key
+                                                                       # then sort negatively according to first key
+    if royal and flush:
+        return (9, sorted_frequency)
+    elif straight and flush:
+        return (8, sorted_frequency)
+    elif frequency[0][1] == 4:
+        return (7, sorted_frequency)
+    elif frequency[0][1] == 3 and frequency[1][1] == 2: #full house
+        return (6, sorted_frequency)
+    elif flush:
+        return (5, sorted_frequency)
+    elif straight:
+        return (4, sorted_frequency)
+    elif frequency[0][1] == 3:
+        return (3, sorted_frequency)
+    elif frequency[0][1] == 2 and frequency[1][1] == 2:
+        return (2, sorted_frequency)
+    elif frequency[0][1] == 2:
+        return (1, sorted_frequency)
+    else:
+        return (0, sorted_frequency)
 
 
 hands = []
@@ -142,7 +77,15 @@ with open("p054_poker.txt") as file:
 
 count = 0
 for hand in hands:
-    value =  evaluate_hand(hand)
-    count += value
-    print value
-print len(hands) - count
+    player1 =  evaluate_hand(hand[:5])
+    player2 =  evaluate_hand(hand[5:])
+    if player1[0] > player2[0]:
+        count += 1
+    elif player1[0] == player2[0]:
+        for first, second in zip(player1[1],player2[1]):
+            if first > second:
+                count += 1
+                break
+            if first < second:
+                break
+print count
