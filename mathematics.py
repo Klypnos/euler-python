@@ -51,7 +51,7 @@ def sieve_between(m, n):
     return [i for i, value in enumerate(primes) if value and i >= m]
 
 def int_to_list(number):
-    return map(int,[i for i in str(number)])
+    return list(map(int,[i for i in str(number)]))
 
 def list_to_int(digits):
     sum = 0
