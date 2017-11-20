@@ -19,28 +19,7 @@ def sieve(n):
         for j in range(i * i, n, i):
             primes[j] = False
     return [i for i, value in enumerate(primes) if value]
-"""
-def np_sieve(n):
-    primes = np.ones(n, dtype=bool)
-    #print primes
-    #print primes, type(primes)
-    primes[0], primes[1] = False, False
-    for i in range(2, int(sqrt(n))): #
-        for j in range(i * i, n, i):
-            primes[j] = False
-    size = np.sum(primes)
-    prime_indices = np.empty(size, dtype=np.int32)
-    #print size, np.size(prime_indices)
-    index = 0
-    #print primes
-    for i, value in enumerate(primes):
-        if value:
-            prime_indices[index] = i
-            index += 1
-    #print index
-    return prime_indices
-sieve(10000000)
-"""
+
 #sieve of eratosthenes find all primes (m, n)
 def sieve_between(m, n):
     primes = [True] * n
